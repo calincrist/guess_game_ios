@@ -8,22 +8,67 @@
 
 import SwiftUI
 
-struct ContentView: View {
+class ContentViewModel: ObservableObject {
     
     let redTarget = Double.random(in: 0..<1)
+    
+    @Published var redOpacity: Double = 0
+    @Published var redGuess: Double = 0 {
+        didSet {
+            redOpacity = getOpacity(forColor: "red")
+        }
+    }
+    
+    func computeScore() -> Double {
+        let difference = abs(redGuess - redTarget)
+        
+        return (1.0 - difference) * 100.0 + 0.5
+    }
+    
+    func getOpacity(forColor color: String) -> Double {
+        
+        if color == "red" {
+            let redScore = computeScore()
+            return Double(redScore) / 100
+        }
+        
+        return 0
+        
+//        if color == "blue" {
+//            let blueDiff = blueGuess - blueTarget
+//            return 1.0 - Double(blueDiff) / 100.0
+//        }
+//
+//        let greenDiff = greenGuess - greenTarget
+//        return 1.0 - Double(greenDiff) / 100.0
+    }
+}
+
+struct ContentView: View {
+    
+//    let redTarget = Double.random(in: 0..<1)
     let blueTarget = Double.random(in: 0..<1)
     let greenTarget = Double.random(in: 0..<1)
     
     //  MARK: - States
     //  ORDER MATTERS for the init
-    @State var redGuess: Double
+//    @State var redGuess: Double
     @State var blueGuess: Double
     @State var greenGuess: Double
     @State var showAlert = false
     
+//    @State var redSliderOpacity: Double = 1.0
+    @State var blueSliderOpacity: Double = 1.0
+    @State var greenSliderOpacity: Double = 1.0
+    
+    //  MARK: - Observed objects
+    @ObservedObject var timer = TimeCounter() // In Combine terminology, you're subscribing to the TimeCounter publisher.
+    
+    @ObservedObject var viewModel = ContentViewModel()
+    
     //  MARK: - Actions
     func computeScore() -> Int {
-        let redDiff = redGuess - redTarget
+        let redDiff = viewModel.redGuess - viewModel.redTarget
         let blueDiff = blueGuess - blueTarget
         let greenDiff = greenGuess - greenTarget
         
@@ -35,6 +80,22 @@ struct ContentView: View {
         return Int((1.0 - totalDiff) * 100.0 + 0.5)
     }
     
+    func getOpacity(forColor color: String) -> Double {
+        
+        if color == "red" {
+            let redDiff = viewModel.redGuess - viewModel.redTarget
+            return 1.0 - Double(redDiff) / 100.0
+        }
+        
+        if color == "blue" {
+            let blueDiff = blueGuess - blueTarget
+            return 1.0 - Double(blueDiff) / 100.0
+        }
+        
+        let greenDiff = greenGuess - greenTarget
+        return 1.0 - Double(greenDiff) / 100.0
+    }
+    
     
     //  MARK: - body
     var body: some View {
@@ -43,24 +104,26 @@ struct ContentView: View {
                 HStack {
                     VStack {
                         ZStack(alignment: .center) {
-                            Color(red: redGuess, green: blueGuess, blue: greenGuess)
-                            Text("60")
+                            Color(red: viewModel.redGuess, green: greenGuess, blue: blueGuess)
+                            Text(String(timer.counter))
                                 .padding(.all, 5)
                                 .background(Color.black)
                                 .mask(Circle())
                         }
                         self.showAlert ?
-                            Text("R: \(Int(redGuess * 255)) G: \(Int(greenGuess * 255)) B: \(Int(blueGuess * 255))")
+                            Text("R: \(Int(viewModel.redGuess * 255)) G: \(Int(greenGuess * 255)) B: \(Int(blueGuess * 255))")
                             :
                             Text("Match this color")
+                        Text("Red opacity: \(viewModel.redOpacity)")
                     }
                     VStack {
-                        Color(red: redTarget, green: greenTarget, blue: blueTarget)
-                        Text("R: \(Int(redTarget * 255)) G: \(Int(greenTarget * 255)) B: \(Int(blueTarget * 255))")
+                        Color(red: viewModel.redTarget, green: greenTarget, blue: blueTarget)
+                        Text("R: \(Int(viewModel.redTarget * 255)) G: \(Int(greenTarget * 255)) B: \(Int(blueTarget * 255))")
                     }
                 }
                 Button(action: {
                     self.showAlert = true
+                    self.timer.killTimer()
                 }) {
                     Text("Hit Me!")
                 }.alert(isPresented: $showAlert) { () -> Alert in
@@ -70,9 +133,9 @@ struct ContentView: View {
                 }.padding()
                 
                 VStack {
-                    ColorSlider(value: $redGuess, textColor: .red)
-                    ColorSlider(value: $greenGuess, textColor: .green)
-                    ColorSlider(value: $blueGuess, textColor: .blue)
+                    ColorSlider(value: $viewModel.redGuess, opacity: $viewModel.redOpacity, textColor: .red)
+                    ColorSlider(value: $greenGuess, opacity: $greenSliderOpacity, textColor: .green)
+                    ColorSlider(value: $blueGuess, opacity: $blueSliderOpacity, textColor: .blue)
                 }.padding(.horizontal)
             }
         }
@@ -85,7 +148,7 @@ struct ContentView: View {
 #if DEBUG
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(redGuess: 0.8, blueGuess: 0.1, greenGuess: 0.3)
+        ContentView(blueGuess: 0.1, greenGuess: 0.3)
             .previewLayout(.fixed(width: 568, height: 320))
 //            .environment(\.colorScheme, .dark)
     }
@@ -97,12 +160,19 @@ struct ColorSlider: View {
     
     //  Like props from RN
     @Binding var value: Double
+    @Binding var opacity: Double
     var textColor: Color
     
     var body: some View {
         HStack {
             Text("0").foregroundColor(textColor)
             Slider(value: $value)
+                .background(
+                    Color
+                        .white
+                        .opacity(opacity)
+                        .cornerRadius(10)
+            )
             Text("255").foregroundColor(textColor)
         }
     }

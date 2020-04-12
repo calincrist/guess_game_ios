@@ -13,6 +13,7 @@
 		D42F665A2441D3F900F4ADE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D42F66592441D3F900F4ADE8 /* Assets.xcassets */; };
 		D42F665D2441D3F900F4ADE8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D42F665C2441D3F900F4ADE8 /* Preview Assets.xcassets */; };
 		D42F66602441D3F900F4ADE8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D42F665E2441D3F900F4ADE8 /* LaunchScreen.storyboard */; };
+		D42F66682441EFCF00F4ADE8 /* TimeCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42F66672441EFCF00F4ADE8 /* TimeCounter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		D42F665C2441D3F900F4ADE8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D42F665F2441D3F900F4ADE8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D42F66612441D3F900F4ADE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D42F66672441EFCF00F4ADE8 /* TimeCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeCounter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				D42F665E2441D3F900F4ADE8 /* LaunchScreen.storyboard */,
 				D42F66612441D3F900F4ADE8 /* Info.plist */,
 				D42F665B2441D3F900F4ADE8 /* Preview Content */,
+				D42F66672441EFCF00F4ADE8 /* TimeCounter.swift */,
 			);
 			path = RGBGuessGame;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				D42F66542441D3F700F4ADE8 /* AppDelegate.swift in Sources */,
 				D42F66562441D3F700F4ADE8 /* SceneDelegate.swift in Sources */,
 				D42F66582441D3F700F4ADE8 /* ContentView.swift in Sources */,
+				D42F66682441EFCF00F4ADE8 /* TimeCounter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
